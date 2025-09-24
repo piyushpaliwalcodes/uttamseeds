@@ -1,103 +1,270 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useState } from "react";
+import StepNavbar from "./components/Stepbar";
+import { details } from "./components/data";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
+// ---------------------- TYPES ----------------------
+interface Option {
+  key: string;
+  name: string;
+}
+
+interface Variety {
+  name: string;
+  crop: string;
+  season: string;
+  image: string;
+}
+
+// ---------------------- SELECTOR ----------------------
+interface SelectorProps {
+  setState: (value: string) => void;
+  selectedvalue: string;
+  value: string;
+  optionKey: string;
+}
+
+const Selector = ({ setState, selectedvalue, value, optionKey }: SelectorProps) => {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div
+      className={`px-3 py-2 border-[1px] border-[#CAC4D0] rounded-[4px] hover:cursor-pointer whitespace-nowrap ${
+        selectedvalue === optionKey ? "bg-[#DAF8E5] border-[2px]" : ""
+      }`}
+      onClick={() => setState(optionKey)}
+    >
+      {value}
+    </div>
+  );
+};
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+// ---------------------- SELECT SEASON ----------------------
+interface SelectSeasonProps {
+  setState: (value: string) => void;
+  season: string;
+  values: Option[];
+}
+
+const Selectseason = ({ setState, season, values }: SelectSeasonProps) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <h1 className="font-bold">Select Season / मौसम चुनें*</h1>
+      <div className="flex gap-2">
+        {values.map((value) => (
+          <Selector
+            key={value.key}
+            selectedvalue={season}
+            setState={setState}
+            value={value.name}
+            optionKey={value.key}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ---------------------- SELECT CROP ----------------------
+interface SelectCropProps {
+  setState: (value: string) => void;
+  crop: string;
+  values: Option[];
+}
+
+const Selectcrop = ({ setState, crop, values }: SelectCropProps) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <h1 className="font-bold">Select Crop / फसल चुनें*</h1>
+      <div
+        className="flex gap-3 overflow-x-auto scrollbar-none"
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
+        <style>
+          {`
+            .hide-scrollbar::-webkit-scrollbar {
+              display: none;
+            }
+          `}
+        </style>
+        <div className="hide-scrollbar flex gap-3 w-full">
+          {values.map((value) => (
+            <Selector
+              key={value.key}
+              selectedvalue={crop}
+              setState={setState}
+              value={value.name}
+              optionKey={value.key}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      </div>
+    </div>
+  );
+};
+
+// ---------------------- VARIETY CARD ----------------------
+interface VarietyCardProps {
+  image: string;
+  name: string;
+  setState: (value: string) => void;
+  variety: string;
+  optionKey: string;
+}
+
+const Varietycard = ({ image, name, setState, optionKey, variety }: VarietyCardProps) => {
+  return (
+    <div
+      className={`min-w-full p-[10px] flex flex-col gap-[10px] text-black rounded-[4px] border-[#2C593C] border-[2px] ${
+        optionKey === variety ? "bg-[#DAF8E5]" : ""
+      }`}
+      onClick={() => setState(optionKey)}
+    >
+      <img src={image} alt={name} className="w-[151px] h-[151px]" />
+      <h1 className="text-center">{name}</h1>
+    </div>
+  );
+};
+
+// ---------------------- SELECT VARIETY ----------------------
+interface SelectVarietyProps {
+  setState: (value: string) => void;
+  variety: string;
+  varieties: Variety[];
+  crop: string;
+  season: string;
+}
+
+const Selectvariety = ({ setState, variety, varieties, crop, season }: SelectVarietyProps) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <h1 className="font-bold">Choose Variety / किस्म चुनें*</h1>
+      <div className="grid grid-cols-2 gap-3">
+        {varieties
+          ?.filter(
+            (item) =>
+              item.crop.toLowerCase().replace(/[^a-z]/gi, "") === crop?.toLowerCase().replace(/[^a-z]/gi, "") &&
+              item.season.toLowerCase().replace(/[^a-z]/gi, "") === season?.toLowerCase().replace(/[^a-z]/gi, "")
+          )
+          .map((item) => (
+            <Varietycard
+              key={item.name}
+              setState={setState}
+              name={item.name}
+              image={item.image}
+              optionKey={item.name}
+              variety={variety}
+            />
+          ))}
+      </div>
+    </div>
+  );
+};
+
+// ---------------------- MAIN COMPONENT ----------------------
+export default function Home() {
+  const [season, setSeason] = useState("");
+  const [crop, setCrop] = useState("");
+  const [variety, selectVariety] = useState("");
+  const [step, setStep] = useState(0);
+  const router = useRouter(); // ✅ create router
+
+  // Function to get crops available for the selected season
+  const getCropsForSeason = (selectedSeason: string): Option[] => {
+    if (!selectedSeason) return [];
+
+    const availableCrops = details
+      .filter((item) => item.season.toLowerCase() === selectedSeason.toLowerCase())
+      .map((item) => item.crop)
+      .filter((crop, index, self) => self.indexOf(crop) === index);
+
+    const cropMap: { [key: string]: string } = {
+      soyabean: "🫘 Soybean / सोयाबीन",
+      methi: "🌿 Methi / मेथी",
+      wheat: "🌾 Wheat / गेहूं",
+      chana: "🫘 Chana / चना",
+      maize: "🌽 Maize / मक्का",
+      moong: "🟢 Moong / मूंग",
+      paddy: "🌾 Paddy / धान",
+      sesame: "🫒 Sesame / तिल",
+      toor: "🫘 Toor / तूर",
+      urad: "⚫ Urad / उड़द",
+    };
+
+    return availableCrops.map((crop) => ({
+      key: crop,
+      name: cropMap[crop] || crop,
+    }));
+  };
+
+  const crops = getCropsForSeason(season);
+
+  const seasons: Option[] = [
+    { key: "kharif", name: "☀️ Kharif / खरीफ" },
+    { key: "rabi", name: "❄️ Rabi / रबी" },
+  ];
+
+  useEffect(() => {
+    if (season !== "") setStep(1);
+    if (season !== "" && crop !== "") setStep(2);
+    if (season !== "" && crop !== "" && variety !== "") setStep(3);
+  }, [season, crop, variety]);
+
+  useEffect(() => {
+    if (season !== "") {
+      setCrop("");
+      selectVariety("");
+    }
+  }, [season]);
+
+  useEffect(() => {
+    if (crop !== "") {
+      selectVariety("");
+    }
+  }, [crop]);
+
+  const handleContinue = () => {
+    if (step === 3) {
+      router.push(`/details?crop=${encodeURIComponent(crop)}&variety=${encodeURIComponent(variety)}`);
+    }
+  };
+
+  return (
+    <div className="flex flex-col justify-between text-black py-4 px-5 gap-4 relative min-h-screen pb-20">
+      <div className="flex flex-col flex-grow">
+        <StepNavbar currentStep={step} />
+        <div className="flex flex-col gap-8">
+          {/* Step 0: Select Season */}
+          <Selectseason setState={setSeason} season={season} values={seasons} />
+
+          {/* Step 1: Show Crop only after season is selected */}
+          {step >= 1 && <Selectcrop setState={setCrop} crop={crop} values={crops} />}
+
+          {/* Step 2: Show Variety only after crop is selected */}
+          {step >= 2 && (
+            <Selectvariety
+              setState={selectVariety}
+              variety={variety}
+              varieties={details}
+              crop={crop}
+              season={season}
+            />
+          )}
+        </div>
+      </div>
+      <div className="fixed bottom-[calc(env(safe-area-inset-bottom)+16px)] left-1/2 -translate-x-1/2 z-50 min-w-full flex justify-center">
+        <button
+          className={`${
+            step === 3 ? "bg-[#2C593C] text-white " : "bg-[#B3B3B3] text-[#757575]"
+          } text-[20px] w-fit px-4 py-1 rounded-[4px] `}
+          disabled={step !== 3}
+          onClick={handleContinue}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          Continue / आगे बढ़ें
+        </button>
+      </div>
     </div>
   );
 }
