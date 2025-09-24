@@ -151,7 +151,7 @@ const DetailsContent = () => {
        {/* Scrollable Content */}
        <div className="flex flex-col gap-4 px-5 py-4 mt-4">
       
-        <div className="flex flex-col gap-2  bg-[#DAF8E5] p-4 items-start">
+        <div className="flex flex-col gap-2  bg-[#FFF6D3] p-4 items-start">
           <div className="flex justify-center items-center min-w-full">
             <img src={variety?.image} className="w-[294px] h-[294px]" alt={varietyname || "Crop variety image"}/>
           </div>
