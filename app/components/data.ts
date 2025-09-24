@@ -75,14 +75,14 @@ export const details = [
 
 
 export const crops = [
-    { key: "soyabean", name: "🫘 Soybean / सोयाबीन" },
+    { key: "soyabean", name: "🫘 Soyabean / सोयाबीन" },
     { key: "methi", name: "🌿 Methi / मेथी" },
     { key: "wheat", name: "🌾 Wheat / गेहूं" },
     { key: "chana", name: "🫘 Chana / चना" },
     { key: "maize", name: "🌽 Maize / मक्का" },
     { key: "moong", name: "🟢 Moong / मूंग" },
     { key: "paddy", name: "🌾 Paddy / धान" },
-    { key: "sesame", name: "🫒 Sesame / तिल" },
+    { key: "sesame", name: "⚪️ Sesame / तिल" },
     { key: "toor", name: "🫘 Toor / तूर" },
     { key: "urad", name: "⚫ Urad / उड़द" }
   ];
