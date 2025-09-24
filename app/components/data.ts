@@ -27,7 +27,7 @@ export const details = [
         crop:"soyabean",
         season:"kharif",
         image:"/uttamseeds/kds992.png",
-        name:"KDS-992(Phule Dhurva)",
+        name:"KDS-992(Phule Durva)",
         details:"",
     },
     {
